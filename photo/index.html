@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manuel Llamas Photography</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* center container horizontally */
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1; /* allow content + iframe to stretch */
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .logo {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-weight: 300;
+      color: #000;
+      text-decoration: none;
+    }
+    .logo:visited,
+    .logo:hover,
+    .logo:active {
+      color: #000;
+    }
+
+    .logo span {
+      font-weight: 300;
+      color: #000;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    nav ul li {
+      margin-left: 30px;
+    }
+
+    nav ul li a {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-weight: 300;
+      color: #000;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* iframe fills available space but max 1200px wide */
+    iframe#content {
+      flex: 1;
+      width: 100%;
+      max-width: 1150px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <a href="index.html" class="logo" id="home-logo">
+        MANUEL LLAMAS<br> <span>Photography</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a data-section="portfolio">Portfolio</a></li>
+          <li><a data-section="ebooks">Ebooks</a></li>
+        </ul>
+      </nav>
+    </header>
+
+<iframe id="content" name="content" src="home.html"></iframe>
+  </div>
+
+</body>
+</html>

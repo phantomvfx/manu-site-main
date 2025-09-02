@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuel Llamas Photography</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Fix logo link color */
+        .logo {
+            font-family: 'Roboto', Arial, sans-serif;
+            font-weight: 300;
+            color: #000;
+            text-decoration: none;
+        }
+        .logo:visited,
+        .logo:hover,
+        .logo:active {
+            color: #000;
+        }
+
+        .logo span {
+            font-weight: 300;
+            color: #000;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        /* Nav links with pointer cursor */
+        nav ul li a {
+            font-family: 'Roboto', Arial, sans-serif;
+            font-weight: 300;
+            color: #000;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .content-section {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h2 {
+            font-size: 1em;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* 2x2 Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .grid-item {
+            background-color: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        /* Make all thumbnails square */
+        .grid-item img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+        }
+
+        .grid-item h3 {
+            font-size: 1.2em;
+            margin: 15px 10px;
+            font-weight: normal;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr; /* stack on small screens */
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+        <!-- Portfolio Section -->
+        <div id="portfolio-section" class="content-section">
+            <h2>Portfolio</h2>
+            <div class="grid">
+                <a href="travel.html" target="content" class="grid-item">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="images/bkk_.101-800x600.jpg">
+                        <img src="images/bkk_.101-1200x960.jpg" alt="Travel photography">
+                    </picture>
+                    <h3>Travel</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="images/bkk_.100-800x600.jpg">
+                        <img src="images/bkk_.100-1200x960.jpg" alt="Street photography">
+                    </picture>
+                    <h3>Street</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="images/01-1-800x600.jpg">
+                        <img src="images/01-1-1200x960.jpg" alt="Headshot photography">
+                    </picture>
+                    <h3>Headshots</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="images/Final_87-800x600.jpg">
+                        <img src="images/Final_87-1200x857.jpg" alt="Corporate headshot photography">
+                    </picture>
+                    <h3>Corporate Headshots</h3>
+                </a>
+            </div>
+        </div>
+
+        <!-- Ebooks Section -->
+        <div id="ebooks-section" class="content-section">
+            <h2>Ebooks</h2>
+            <div class="grid">
+                <a href="#" class="grid-item">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="images/bangkokians-800-600.jpg">
+                        <img src="images/bangkokians-1200-960.jpg" alt="Bangkokians Ebook cover">
+                    </picture>
+                    <h3>Bangkokians</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="images/11968586234_61317aafe6_oREZ-800x600.jpg">
+                        <img src="images/11968586234_61317aafe6_oREZ-1200x858.jpg" alt="The Art of Muay Thai Ebook cover">
+                    </picture>
+                    <h3>The Art of Muay Thai</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('nav ul li a');
+            const homeLogo = document.getElementById('home-logo');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function showSection(sectionId) {
+                contentSections.forEach(section => {
+                    if (section.id === sectionId) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const targetSection = this.getAttribute('data-section');
+                    if (targetSection === 'portfolio') {
+                        showSection('portfolio-section');
+                    } else if (targetSection === 'ebooks') {
+                        showSection('ebooks-section');
+                    }
+                });
+            });
+
+            homeLogo.addEventListener('click', function(event) {
+                event.preventDefault();
+                contentSections.forEach(section => section.classList.remove('hidden'));
+            });
+        });
+    </script>
+</body>
+</html>

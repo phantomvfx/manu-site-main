@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Manuel Llamas Visual Effects Artist Portfolio">
+    <meta name="keywords" content="Visual Effects Compositing">
+    <meta name="author" content="Manuel Llamas">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM4H317MLM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NM4H317MLM');
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Muli&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="styles3d.css">
+   
+</head>
+<body>
+
+
+<div style="position: relative; padding-bottom: 30%; height: 0; overflow: hidden; max-width: 66%; margin: 0 auto;">
+  <video 
+    src="clips/Mllamas_3D_Generalist.mp4" 
+    controls 
+    autoplay 
+    loop 
+    muted 
+    playsinline 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+
+
+<div style="text-align: center; margin: 40px auto;">
+
+  <table style="margin: 0 auto; text-align: left;">
+    <tr>
+      <td style="padding: 6px; font-weight: bold;">Tools:</td>
+      <td style="padding: 6px;">
+        Metashape, Blender, Substance Painter, Maya & Vray, Unity HDRP & Octane
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 6px; font-weight: bold;">Techniques:</td>
+      <td style="padding: 6px;">
+        Photogrammetry, Retopology, PBR Materials and Textures
+      </td>
+    </tr>
+  </table>
+ </div>
+
+
+</div>
+</div>
+
+
+
+
+<!-- Scroll to Top Button -->
+<a id="scrollToTop" href="#" title="Scroll to Top">
+    <i class="fas fa-chevron-up"></i>
+</a>
+
+<!-- Scripts -->
+<script>
+    // Scroll to Top Button
+    window.onscroll = function() {
+        scrollFunction();
+    };
+
+    function scrollFunction() {
+        var scrollToTopButton = document.getElementById("scrollToTop");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            scrollToTopButton.classList.add('show');
+        } else {
+            scrollToTopButton.classList.remove('show');
+        }
+    }
+
+    document.getElementById('scrollToTop').addEventListener('click', function(event) {
+        event.preventDefault();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+</script>
+
+</body>
+</html>

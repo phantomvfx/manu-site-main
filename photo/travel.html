@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - Travel</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      color: #000;
+      background: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+    }
+    .logo {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-weight: 300;
+      font-size: 18px;
+      text-decoration: none;
+      color: #000;
+    }
+    .logo span {
+      display: block;
+      font-size: 12px;
+      color: #666;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+    nav ul li a {
+      font-weight: 300;
+      text-decoration: none;
+      color: #000;
+    }
+    main {
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h2 {
+      font-weight: 400;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .grid-item {
+      position: relative;
+      cursor: pointer;
+    }
+    .grid-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .caption {
+      display: none;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+    }
+    .lightbox p {
+      color: #fff;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .lightbox:target {
+      display: flex;
+    }
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 28px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+
+  <main>
+    <h2>Travel</h2>
+    <div class="grid">
+      <!-- Grid Item Example -->
+      <div class="grid-item">
+        <a href="#img1">
+          <img src="thumbs/travel1-thumb.jpg" alt="Night Sky">
+        </a>
+        <div class="caption">Night Sky</div>
+      </div>
+      <div class="grid-item">
+        <a href="#img2">
+          <img src="thumbs/travel2-thumb.jpg" alt="Torii Gate">
+        </a>
+        <div class="caption">Torii Gate at Sunset</div>
+      </div>
+      <div class="grid-item">
+        <a href="#img3">
+          <img src="thumbs/travel3-thumb.jpg" alt="Angkor Wat">
+        </a>
+        <div class="caption">Angkor Wat Morning</div>
+      </div>
+
+      <!-- Add up to 12 items per section (3x4 grid) -->
+    </div>
+  </main>
+
+  <!-- Lightbox Items -->
+  <div id="img1" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="full/travel1.jpg" alt="Night Sky">
+    <p>Night Sky</p>
+  </div>
+  <div id="img2" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="full/travel2.jpg" alt="Torii Gate">
+    <p>Torii Gate at Sunset</p>
+  </div>
+  <div id="img3" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="full/travel3.jpg" alt="Angkor Wat">
+    <p>Angkor Wat Morning</p>
+  </div>
+
+</body>
+</html>
