@@ -31,7 +31,6 @@
             border-bottom: 1px solid #eee;
         }
 
-        /* Fix logo link color */
         .logo {
             font-family: 'Roboto', Arial, sans-serif;
             font-weight: 300;
@@ -60,7 +59,6 @@
             margin-left: 30px;
         }
 
-        /* Nav links with pointer cursor */
         nav ul li a {
             font-family: 'Roboto', Arial, sans-serif;
             font-weight: 300;
@@ -79,18 +77,18 @@
 
         h2 {
             font-size: 1em;
-            margin-top: 50px;
-            margin-bottom: 30px;
+            margin-top: 30px;   /* reduced top margin */
+            margin-bottom: 20px; /* reduced bottom margin */
             border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
 
-        /* 2x2 Grid Layout */
+        /* Grid Layout */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            margin-bottom: 50px;
+            gap: 15px; /* smaller gap for compact spacing */
+            margin-bottom: 30px; /* less bottom margin */
         }
 
         .grid-item {
@@ -104,7 +102,6 @@
             display: block;
         }
 
-        /* Make all thumbnails square */
         .grid-item img {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -114,35 +111,61 @@
 
         .grid-item h3 {
             font-size: 1.2em;
-            margin: 15px 10px;
+            margin: 10px 5px; /* smaller margins for compact spacing */
             font-weight: normal;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
         }
 
         @media (max-width: 768px) {
             .grid {
-                grid-template-columns: 1fr; /* stack on small screens */
-                gap: 20px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .grid-item h3 {
+                font-size: 1em;
+                margin: 8px 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .grid-item h3 {
+                font-size: 0.9em;
+                margin: 6px 3px;
             }
         }
     </style>
 </head>
 <body>
 
+    <div class="container">
         <!-- Portfolio Section -->
         <div id="portfolio-section" class="content-section">
             <h2>Portfolio</h2>
             <div class="grid">
                 <a href="travel.html" target="content" class="grid-item">
                     <picture>
-                        <source media="(max-width: 768px)" srcset="images/bkk_.101-800x600.jpg">
-                        <img src="images/bkk_.101-1200x960.jpg" alt="Travel photography">
+                        <source media="(max-width: 768px)" srcset="images/bkk_.101-800x600.png">
+                        <img src="images/bkk_.101-1200x960.png" alt="Travel photography">
                     </picture>
                     <h3>Travel</h3>
                 </a>
                 <a href="#" class="grid-item">
                     <picture>
-                        <source media="(max-width: 768px)" srcset="images/bkk_.100-800x600.jpg">
-                        <img src="images/bkk_.100-1200x960.jpg" alt="Street photography">
+                        <source media="(max-width: 768px)" srcset="images/bkk_.100-800x600.png">
+                        <img src="images/bkk_.100-1200x960.png" alt="Street photography">
                     </picture>
                     <h3>Street</h3>
                 </a>
