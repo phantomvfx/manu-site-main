@@ -17,6 +17,29 @@
       scroll-behavior: smooth;
     }
 
+/* Custom Scrollbar Styles */
+    /* For Webkit browsers (Chrome, Safari, Edge, Opera) */
+    ::-webkit-scrollbar {
+      width: 10px; /* width of the scrollbar */
+      background-color: #f5f5f5; /* color of the scrollbar track */
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f5f5f5; /* track background */
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc; /* scrollbar color */
+      border-radius: 5px;
+      border: 2px solid #f5f5f5; /* padding around the thumb */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #999; /* scrollbar color on hover */
+    }
+
+
     body {
       font-family: 'Montserrat', Arial, sans-serif;
       color: #000;
@@ -242,6 +265,7 @@
   </style>
 </head>
 <body id="top">
+  <br><br>
   <div class="container">
     <header>
       <a href="#top" class="logo">Manuel Llamas <span>Photography</span></a>
