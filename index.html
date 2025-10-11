@@ -39,7 +39,6 @@
       background-color: transparent;
       color: white;
       overflow: visible;
-      text-align: right;
       padding: 0;
       position: absolute;
       top: 0;
@@ -50,29 +49,35 @@
       justify-content: space-between;
       align-items: center;
       z-index: 1001;
+      padding-right: 22px;
     }
 
-    .topnav a:first-child {
+    .topnav .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .topnav a.topnav-link.title {
       display: block;
       float: none;
       text-align: left;
-      padding: 10px 22px;
-      color: white;
+      padding: 10px 0 10px 10px;
+      color: white; /* Default color */
       text-decoration: none;
       font-size: 16px;
       line-height: 1;
       transition: color 0.3s;
     }
 
-    .topnav a:first-child:hover {
+    .topnav a.topnav-link.title:hover {
       color: gray;
     }
 
     .topnav .icon {
       display: block;
-      padding: 10px 22px;
+      padding: 10px 10px;
       cursor: pointer;
-      color: white;
+      color: white; /* Default color */
       transition: color 0.3s;
     }
 
@@ -97,8 +102,19 @@
       text-align: center;
     }
 
+    .topnav.responsive .dropdown-content {
+      display: block;
+      left: 0;
+      right: auto;
+      width: auto;
+      background-color: rgba(0, 0, 0, 0.9);
+      text-align: left;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
     .dropdown-content a {
-      color: white;
+      color: white; /* Default color */
       padding: 12px 16px;
       text-decoration: none;
       display: block;
@@ -111,22 +127,44 @@
       color: white;
     }
 
-    .topnav.responsive .dropdown-content {
-      display: block;
-    }
-
     /* Black text for photography section */
+    .topnav.black-text .topnav-link.title, /* ADDED THIS LINE */
     .topnav.black-text .topnav-link,
     .topnav.black-text .icon,
     .topnav.black-text .dropdown-content a {
       color: black;
     }
 
+    .topnav.black-text .topnav-link.title:hover, /* ADDED THIS LINE */
     .topnav.black-text .topnav-link:hover,
     .topnav.black-text .icon:hover,
     .topnav.black-text .dropdown-content a:hover {
       color: #333;
     }
+
+    /* White box for photography section */
+    .topnav.black-text {
+      background-color: white;
+      padding: 0 22px 0 0;
+    }
+    .topnav.black-text .nav-left {
+      background-color: white;
+      padding-left: 10px;
+    }
+    .topnav.black-text .icon {
+      color: black;
+    }
+    .topnav.black-text .dropdown-content {
+      background-color: white;
+    }
+    .topnav.black-text .dropdown-content a {
+      color: black;
+    }
+    .topnav.black-text .dropdown-content a:hover {
+      background-color: #eee;
+      color: black;
+    }
+
 
     /* Iframe Container */
     .iframe-container {
@@ -151,12 +189,13 @@
 <body>
   <!-- Top Navigation -->
   <div class="topnav" id="myTopnav">
-    <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('home.html');">Manuel Llamas Portfolio</a>
-    
-    <div class="icon" onclick="toggleMenu(this)">
-      <i class="fas fa-bars"></i>
+    <div class="nav-left">
+      <div class="icon" onclick="toggleMenu(this)">
+        <i class="fas fa-bars"></i>
+      </div>
+      <a href="javascript:void(0);" class="topnav-link title" onclick="loadContent('home.html');">Manuel Llamas Portfolio</a>
     </div>
-
+    
     <div class="dropdown-content" id="myDropdown">
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('3D/index.html');">3D</a>
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('https://phantasmalabs.netlify.app/synth.html');">Synthography</a>
@@ -192,14 +231,17 @@
       document.getElementById("displaycontainer").src = page;
 
       var topnav = document.getElementById("myTopnav");
-      topnav.classList.remove("responsive");
+      // Only remove "responsive" if the menu is actually open
+      if (topnav.classList.contains("responsive")) {
+          topnav.classList.remove("responsive");
+          // Reset the icon to burger when menu closes (after checking responsive class)
+          const icon = document.querySelector(".icon i");
+          icon.classList.remove("fa-times");
+          icon.classList.add("fa-bars");
+      }
 
-      // Reset the icon to burger when menu closes
-      const icon = document.querySelector(".icon i");
-      icon.classList.remove("fa-times");
-      icon.classList.add("fa-bars");
 
-      // Switch text color for Photography section
+      // Switch text color and background for Photography section
       if (page.includes('photo/index.html')) {
         topnav.classList.add('black-text');
       } else {
@@ -209,7 +251,8 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', () => {
-      loadContent(document.getElementById("displaycontainer").src);
+      const initialSrc = document.getElementById("displaycontainer").src;
+      loadContent(initialSrc);
     });
   </script>
 </body>
