@@ -29,34 +29,6 @@ body {
 a { color: white; text-decoration: none; transition: color 0.3s ease; }
 a:hover { color: yellow; }
 
-/* Top Navigation */
-.topnav {
-    background-color: black;
-    overflow: hidden;
-    text-align: center;
-    padding: 8px 0;
-}
-.topnav a {
-    display: inline-block;
-    color: white;
-    padding: 12px 16px;
-    font-size: 16px;
-    transition: color 0.3s;
-}
-.topnav a:hover { color: yellow; }
-.topnav .icon { display: none; }
-
-@media screen and (max-width: 600px) {
-    .topnav a:not(:first-child) { display: none; }
-    .topnav a.icon { display: block; float: right; }
-    .topnav.responsive a { display: block; text-align: left; }
-}
-
-/* Hero Section */
-.site-inner { max-width: 900px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
-.hero h1 { font-size: 2.5em; margin-bottom: 10px; }
-.hero p { font-size: 1.2em; margin-bottom: 20px; }
-
 /* Buttons */
 .btn {
     display: inline-block;
@@ -70,6 +42,11 @@ a:hover { color: yellow; }
     transition: 0.3s;
 }
 .btn:hover { background-color: white; color: black; }
+
+/* Hero Section */
+.site-inner { max-width: 900px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+.hero h1 { font-size: 2.5em; margin-bottom: 10px; }
+.hero p { font-size: 1.2em; margin-bottom: 20px; }
 
 /* Video Lessons Grid */
 .video-grid {
@@ -112,20 +89,15 @@ a:hover { color: yellow; }
 </head>
 <body>
 
-<!-- Top Navigation -->
-<div class="topnav" id="myTopnav">
-  <a href="../../index.html">Home</a>
-  <a href="../../edu/index.html">Education</a>
-  <a href="#video-lessons">Lessons</a>
-  <a href="https://discord.gg/EwxZqHj8" target="_blank">Discord</a>
-  <a href="javascript:void(0);" class="icon" onclick="toggleNav()"><i class="fas fa-bars"></i></a>
-</div>
-
 <div class="site-inner">
+
+    <!-- Back/Home Button -->
+    <a href="../../edu/index.html" class="btn"><i class="fas fa-arrow-left"></i> Back to Education</a>
+
     <!-- Hero Section -->
     <div class="hero">
-        <h1>VFX101 - Introducción a los Efectos Visuales</h1>
-        <p>Este curso es un mapa completo que te guiará a través del fascinante viaje de la creación de efectos visuales (VFX). Descubre el proceso profesional que utilizan los estudios para transformar una simple idea en una escena final impactante, cubriendo cada aspecto clave del diseño y desarrollo.</p>
+        <h1>VFX101 - Intro to Compositing</h1>
+        <p>Learn the fundamentals of digital compositing and VFX from a professional with 20 years of experience. This course includes video lessons, downloadable PDFs, and practical exercises.</p>
     </div>
 
     <!-- Video Lessons Section -->
@@ -136,11 +108,11 @@ a:hover { color: yellow; }
             <p><a href="../../resources/FreeCourse1.pdf" target="_blank" class="btn">Download PDF</a></p>
         </div>
         <div class="iframe-container">
-            <iframe class="responsive-iframe" src="https://www.youtube.com/embed/3QKgecAn4ak" allowfullscreen></iframe>
+            <iframe class="responsive-iframe" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2" allowfullscreen></iframe>
             <p><a href="../../resources/FreeCourse2.pdf" target="_blank" class="btn">Download PDF</a></p>
         </div>
         <div class="iframe-container">
-            <iframe class="responsive-iframe" src="https://www.youtube.com/embed/3QKgecAn4ak" allowfullscreen></iframe>
+            <iframe class="responsive-iframe" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_3" allowfullscreen></iframe>
             <p><a href="../../resources/FreeCourse3.pdf" target="_blank" class="btn">Download PDF</a></p>
         </div>
     </div>
@@ -149,19 +121,13 @@ a:hover { color: yellow; }
     <h2 style="margin-top:50px;">Join the Community</h2>
     <p>Get support, feedback, and connect with other students on Discord.</p>
     <a href="https://discord.gg/EwxZqHj8" target="_blank" class="btn">Join Discord</a>
+
 </div>
 
 <!-- Scroll to Top -->
 <a id="scrollToTop" href="#" title="Scroll to Top"><i class="fas fa-chevron-up"></i></a>
 
 <script>
-// Topnav toggle for mobile
-function toggleNav() {
-    var x = document.getElementById("myTopnav");
-    if (x.className === "topnav") { x.className += " responsive"; } 
-    else { x.className = "topnav"; }
-}
-
 // Scroll to top button
 window.onscroll = function() { scrollFunction(); };
 function scrollFunction() {
