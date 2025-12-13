@@ -172,22 +172,75 @@
 
       // Idle Animation Variables
       const startTime = Date.now();
-      const idleThreshold = 100; // User set threshold
+      const idleThreshold = 100;
 
+      // Mouse Listener
       document.addEventListener('mousemove', (event) => {
         userHasInteracted = true;
-        // Normalize mouse -1 to 1
         mouseX = (event.clientX - windowHalfX) / windowHalfX;
         mouseY = (event.clientY - windowHalfY) / windowHalfY;
       });
 
+      // Gyroscope Listener (Mobile)
+      const handleOrientation = (event) => {
+        if (!event.alpha && !event.beta && !event.gamma) return;
+
+        userHasInteracted = true;
+
+        // Gamma: Left/Right tilt (-90 to 90)
+        // Map -45 to 45 -> -1 to 1
+        let g = event.gamma || 0;
+        if (g > 45) g = 45;
+        if (g < -45) g = -45;
+        mouseX = g / 45;
+
+        // Beta: Front/Back tilt (-180 to 180)
+        // Holding phone normally: Beta is around 45 to 90 degrees.
+        // Let's assume neutral is 45 degrees. Range 0 to 90.
+        // Map 0 to 90 -> -1 to 1
+        let b = event.beta || 0;
+        // Shift center to 45
+        let bNorm = b - 45;
+        // Clamp -45 to 45
+        if (bNorm > 45) bNorm = 45;
+        if (bNorm < -45) bNorm = -45;
+        mouseY = bNorm / 45;
+      };
+
+      window.addEventListener('deviceorientation', handleOrientation);
+
+      // iOS Permission Request
+      // We need a user interaction to request permission on iOS 13+
+      const requestGyro = () => {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response === 'granted') {
+                window.addEventListener('deviceorientation', handleOrientation);
+              }
+            })
+            .catch(console.error);
+        }
+        // Remove listener after first interaction attempt
+        document.removeEventListener('click', requestGyro);
+        document.removeEventListener('touchstart', requestGyro);
+      };
+
+      document.addEventListener('click', requestGyro);
+      document.addEventListener('touchstart', requestGyro);
+
+
       // Handle Resize
-      window.addEventListener('resize', () => {
+      // Force aggressive resize checking for mobile address bars etc.
+      const onResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
         updateScale();
-      });
+      };
+
+      window.addEventListener('resize', onResize);
+      window.addEventListener('orientationchange', onResize);
 
       // Animation Loop
       const animate = () => {
@@ -198,16 +251,14 @@
         let targetRotY = 0;
 
         // Condition: If user has NOT interacted, AND we passed threshold, do idle.
-        // Once interacted, never idle again.
         if (!userHasInteracted && (now - startTime > idleThreshold)) {
           // Idle Mode: Smooth left-to-right sway
-          // Amplitude 0.1 radians, Speed factor 0.0005
           targetRotY = Math.sin(now * 0.0005) * 0.1;
           targetRotX = Math.cos(now * 0.0003) * 0.05;
         } else if (userHasInteracted) {
           // Active Mode
-          targetRotX = mouseY * 0.3;
-          targetRotY = mouseX * 0.3;
+          targetRotX = mouseY * 0.3; // User tweaked to 0.3
+          targetRotY = mouseX * 0.3; // User tweaked to 0.3
         }
 
         // Smooth interpolation
