@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="description" content="Manuel Llamas Portfolio">
@@ -11,43 +12,217 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM4H317MLM"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-NM4H317MLM');
   </script>
 
   <style>
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* Prevent scrollbars if image extends beyond viewport */
+      overflow: hidden;
+      background-color: #000;
     }
 
-    body {
-      background-image: url('images/nyequi.jpg'); /* Your background image */
-      background-size: cover; /* Cover the entire viewport */
-      background-position: center center; /* Center the image */
-      background-repeat: no-repeat; /* Do not repeat the image */
-      background-attachment: fixed; /* Fix the image in place when scrolling (though overflow is hidden) */
-      background-color: black; /* Fallback color if image fails to load */
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
     }
 
     .container {
       position: relative;
-      z-index: 2; /* Ensure content is above the background */
+      z-index: 2;
       color: white;
       text-align: center;
-      height: 80vh; /* Example height for your content */
+      height: 80vh;
       padding: 20px;
+      pointer-events: none;
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
+
 <body>
 
-<div class="container">
-</div>
+  <div id="canvas-container"></div>
+
+  <div class="container">
+  </div>
+
+  <script>
+    // Configuration
+    const imageURL = 'images/nyequi.jpg';
+    const depthURL = 'images/nyequi_depth_00001_.png';
+    const particleSize = 2;
+    const depthStrength = .9; // User adjusted
+
+    // Scene Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 1; // User adjusted
+    camera.position.y = .025; // User adjusted
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // Load Textures
+    const loader = new THREE.TextureLoader();
+
+    Promise.all([
+      new Promise(resolve => loader.load(imageURL, resolve)),
+      new Promise(resolve => loader.load(depthURL, resolve))
+    ]).then(([texture, depthTexture]) => {
+
+      // Config based on image aspect ratio
+      const imgWidth = texture.image.width;
+      const imgHeight = texture.image.height;
+      const aspect = imgWidth / imgHeight;
+
+      // Create Geometry
+      // User adjusted to 2000
+      const segmentsW = 2500;
+      const segmentsH = Math.round(segmentsW / aspect);
+      const geometry = new THREE.PlaneGeometry(aspect * 2, 2, segmentsW, segmentsH);
+
+      // Shader Material
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uTexture: { value: texture },
+          uDepthMap: { value: depthTexture },
+          uPointSize: { value: particleSize },
+          uDepthStrength: { value: depthStrength },
+          uMouse: { value: new THREE.Vector2(0, 0) }
+        },
+        vertexShader: `
+        uniform sampler2D uDepthMap;
+        uniform float uPointSize;
+        uniform float uDepthStrength;
+        uniform vec2 uMouse;
+        varying vec2 vUv;
+        varying vec3 vPosition;
+
+        void main() {
+          vUv = uv;
+          
+          // Sample depth
+          float depth = 1.0 - texture2D(uDepthMap, uv).r;
+          
+          // Displace Z
+          vec3 pos = position;
+          pos.z += depth * uDepthStrength; 
+
+          vPosition = pos;
+
+          gl_PointSize = uPointSize;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        }
+      `,
+        fragmentShader: `
+        uniform sampler2D uTexture;
+        varying vec2 vUv;
+
+        void main() {
+          vec4 color = texture2D(uTexture, vUv);
+          // Optional: discard dark pixels
+          if (color.r < 0.05 && color.g < 0.05 && color.b < 0.05) discard;
+          gl_FragColor = color;
+        }
+      `,
+        transparent: false,
+        blending: THREE.NormalBlending,
+        depthTest: true,
+        depthWrite: true
+      });
+
+      // Create Point Cloud
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      // Scaling Function (Cover Screen)
+      const updateScale = () => {
+        const dist = camera.position.z;
+        const vH = 2 * Math.tan((camera.fov * Math.PI) / 360) * dist;
+        const vW = vH * camera.aspect;
+        const planeAspect = aspect;
+
+        // We scale uniformly to cover the screen
+        const scale = Math.max(vH / 2, vW / (planeAspect * 2));
+        points.scale.set(scale, scale, scale);
+      };
+
+      // Initial Scale
+      updateScale();
+
+      // Interaction Variables
+      let mouseX = 0;
+      let mouseY = 0;
+      let userHasInteracted = false;
+      const windowHalfX = window.innerWidth / 2;
+      const windowHalfY = window.innerHeight / 2;
+
+      // Idle Animation Variables
+      const startTime = Date.now();
+      const idleThreshold = 100; // User set threshold
+
+      document.addEventListener('mousemove', (event) => {
+        userHasInteracted = true;
+        // Normalize mouse -1 to 1
+        mouseX = (event.clientX - windowHalfX) / windowHalfX;
+        mouseY = (event.clientY - windowHalfY) / windowHalfY;
+      });
+
+      // Handle Resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        updateScale();
+      });
+
+      // Animation Loop
+      const animate = () => {
+        requestAnimationFrame(animate);
+
+        const now = Date.now();
+        let targetRotX = 0;
+        let targetRotY = 0;
+
+        // Condition: If user has NOT interacted, AND we passed threshold, do idle.
+        // Once interacted, never idle again.
+        if (!userHasInteracted && (now - startTime > idleThreshold)) {
+          // Idle Mode: Smooth left-to-right sway
+          // Amplitude 0.1 radians, Speed factor 0.0005
+          targetRotY = Math.sin(now * 0.0005) * 0.1;
+          targetRotX = Math.cos(now * 0.0003) * 0.05;
+        } else if (userHasInteracted) {
+          // Active Mode
+          targetRotX = mouseY * 0.3;
+          targetRotY = mouseX * 0.3;
+        }
+
+        // Smooth interpolation
+        points.rotation.x += 0.05 * (targetRotX - points.rotation.x);
+        points.rotation.y += 0.05 * (targetRotY - points.rotation.y);
+
+        renderer.render(scene, camera);
+      };
+
+      animate();
+
+    });
+
+  </script>
 
 </body>
+
 </html>
