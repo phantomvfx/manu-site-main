@@ -90,7 +90,7 @@
 
       // Create Geometry
       // User adjusted to 2000
-      const segmentsW = 1500;
+      const segmentsW = 2000;
       const segmentsH = Math.round(segmentsW / aspect);
       const geometry = new THREE.PlaneGeometry(aspect * 2, 2, segmentsW, segmentsH);
 
@@ -192,7 +192,7 @@
         let g = event.gamma || 0;
         if (g > 45) g = 45;
         if (g < -45) g = -45;
-        mouseX = g / 45;
+        mouseX = (g / 45) * 3;
 
         // Beta: Front/Back tilt (-180 to 180)
         // Holding phone normally: Beta is around 45 to 90 degrees.
@@ -204,7 +204,7 @@
         // Clamp -45 to 45
         if (bNorm > 45) bNorm = 45;
         if (bNorm < -45) bNorm = -45;
-        mouseY = bNorm / 45;
+        mouseY = (bNorm / 45) * 3;
       };
 
       window.addEventListener('deviceorientation', handleOrientation);
