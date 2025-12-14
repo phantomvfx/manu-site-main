@@ -258,6 +258,11 @@
       const windowHalfX = window.innerWidth / 2;
       const windowHalfY = window.innerHeight / 2;
 
+      // Idle Animation Variables
+      const startTime = Date.now();
+      let lastTime = startTime;
+      let phase = 0;
+
 
 
       // Mouse Listener
@@ -336,12 +341,26 @@
       const animate = () => {
         requestAnimationFrame(animate);
 
+        const now = Date.now();
+
 
         let targetRotX = 0;
         let targetRotY = 0;
 
-        // Condition: If user has NOT interacted, AND we passed threshold, do idle.
-        if (userHasInteracted) {
+        const dt = now - lastTime;
+        lastTime = now;
+
+        // Condition: If user has NOT interacted
+        if (!userHasInteracted) {
+          const elapsed = now - startTime;
+          // Fast start (higher frequency) decaying to smooth slow sway
+          // Base speed 0.0005, initial boost 0.002, decays over ~3000ms
+          const speed = 0.0005 + (0.002 * Math.exp(-elapsed / 3000));
+          phase += speed * dt;
+
+          targetRotY = Math.sin(phase) * 0.3;
+          targetRotX = 0; // Only side-to-side
+        } else {
           // Active Mode
           targetRotX = -mouseY * 0.3; // Inverted
           targetRotY = -mouseX * 0.3; // Inverted
