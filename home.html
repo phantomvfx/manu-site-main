@@ -226,6 +226,13 @@
           if (item.pos === 'BL') item.mesh.position.set(-marginX, -marginY, zPos);
           if (item.pos === 'BR') item.mesh.position.set(marginX, -marginY, zPos);
         });
+
+        // Hide 3D menu on Mobile
+        if (window.innerWidth < 768) {
+          menuGroup.visible = false;
+        } else {
+          menuGroup.visible = true;
+        }
       };
       // ---------------------
 
@@ -293,7 +300,9 @@
         let g = event.gamma || 0;
         if (g > 45) g = 45;
         if (g < -45) g = -45;
-        mouseX = (g / 45) * 2.0; // Reduced to 2.0
+        if (g > 45) g = 45;
+        if (g < -45) g = -45;
+        mouseX = (g / 45) * 4.0; // Increased to 4.0
 
         // Beta: Front/Back tilt (-180 to 180) - LOCKED
         // User requested to lock up/down

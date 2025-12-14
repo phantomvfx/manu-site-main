@@ -195,6 +195,20 @@
       border: none;
       overflow: hidden;
     }
+
+    overflow: hidden;
+    }
+
+    /* Landing Page Logic: Hide on Desktop, Show on Mobile */
+    .topnav.landing-hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .topnav.landing-hidden {
+        display: flex;
+      }
+    }
   </style>
 </head>
 
@@ -254,10 +268,16 @@
       }
 
       // Hide topnav if on home.html (landing page), Show otherwise
+      // Hide topnav if on home.html (landing page), Show otherwise
+      // Logic moved to CSS class .landing-hidden to handle mobile visibility automatically
       if (page.includes("home.html")) {
-        topnav.style.display = "none";
+        // topnav.style.display = "none"; // Old inline style
+        topnav.classList.add('landing-hidden');
+        topnav.style.display = ''; // Clear inline style to let CSS take over
       } else {
-        topnav.style.display = "flex";
+        // topnav.style.display = "flex"; // Old inline style
+        topnav.classList.remove('landing-hidden');
+        topnav.style.display = 'flex'; // Ensure flex is applied when not hidden
       }
 
 
