@@ -258,9 +258,7 @@
       const windowHalfX = window.innerWidth / 2;
       const windowHalfY = window.innerHeight / 2;
 
-      // Idle Animation Variables
-      const startTime = Date.now();
-      const idleThreshold = 100;
+
 
       // Mouse Listener
       document.addEventListener('mousemove', (event) => {
@@ -338,17 +336,12 @@
       const animate = () => {
         requestAnimationFrame(animate);
 
-        const now = Date.now();
+
         let targetRotX = 0;
         let targetRotY = 0;
 
         // Condition: If user has NOT interacted, AND we passed threshold, do idle.
-        if (!userHasInteracted && (now - startTime > idleThreshold)) {
-          // Idle Mode: Smooth left-to-right sway
-          // Amplitude increased 3x as requested (0.1 -> 0.3, 0.05 -> 0.15)
-          targetRotY = Math.sin(now * 0.0005) * 0.3;
-          targetRotX = Math.cos(now * 0.0003) * 0.15;
-        } else if (userHasInteracted) {
+        if (userHasInteracted) {
           // Active Mode
           targetRotX = -mouseY * 0.3; // Inverted
           targetRotY = -mouseX * 0.3; // Inverted
@@ -358,8 +351,7 @@
         points.rotation.x += 0.05 * (targetRotX - points.rotation.x);
         points.rotation.y += 0.05 * (targetRotY - points.rotation.y);
 
-        points.rotation.x += 0.05 * (targetRotX - points.rotation.x);
-        points.rotation.y += 0.05 * (targetRotY - points.rotation.y);
+
 
         // Raycasting Logic
         if (menuItems.length > 0) {
