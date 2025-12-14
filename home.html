@@ -48,6 +48,8 @@
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
 </head>
 
 <body>
@@ -62,13 +64,13 @@
     const imageURL = 'images/nyequi.jpg';
     const depthURL = 'images/nyequi_depth_00001_.png';
     const particleSize = 2;
-    const depthStrength = .9; // User adjusted
+    const depthStrength = .8; // User adjusted
 
     // Scene Setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 1; // User adjusted
-    camera.position.y = .025; // User adjusted
+    camera.position.y = .05; // User adjusted
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -148,6 +150,85 @@
       const points = new THREE.Points(geometry, material);
       scene.add(points);
 
+      // --- 3D MENU SIGNS ---
+      const menuGroup = new THREE.Group();
+      scene.add(menuGroup);
+      const menuItems = [];
+      const menuLabels = [
+        { text: 'XR', pos: 'TL', action: '3D/index.html' },
+        { text: 'AI', pos: 'TR', action: 'https://phantasmalabs.netlify.app/synth.html' },
+        { text: 'VFX', pos: 'BL', action: 'vfx/index.html' },
+        { text: 'Photo', pos: 'BR', action: 'photo/index.html' }
+      ];
+
+      const fontLoader = new THREE.FontLoader();
+      // Using a reliable CDN for the font (Helvetiker Regular)
+      fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+
+        const matNormal = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White
+        const matHover = new THREE.MeshBasicMaterial({ color: 0xff0000 });  // Red
+
+        menuLabels.forEach(item => {
+          const textGeo = new THREE.TextGeometry(item.text, {
+            font: font,
+            size: 0.025, // Halved from 0.05
+            height: 0.005, // Halved from 0.01
+            curveSegments: 12,
+            bevelEnabled: false
+          });
+
+          textGeo.computeBoundingBox();
+          const centerOffset = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
+          const centerOffsetY = -0.5 * (textGeo.boundingBox.max.y - textGeo.boundingBox.min.y);
+          textGeo.translate(centerOffset, centerOffsetY, 0);
+
+          const mesh = new THREE.Mesh(textGeo, matNormal.clone());
+          mesh.userData = {
+            isMenu: true,
+            originalColor: 0xffffff,
+            hoverColor: 0xff0000,
+            label: item.text,
+            action: item.action
+          };
+
+          menuGroup.add(mesh);
+          menuItems.push(mesh);
+
+          // Store position logic for resize updates if needed
+          item.mesh = mesh;
+        });
+
+        updateMenuPositions(); // Initial position
+      });
+
+      // Function to position menus in corners
+      const updateMenuPositions = () => {
+        if (menuItems.length === 0) return;
+
+        // Calculate visible width/height at depth 0.5 (closer to camera)
+        // Camera is at z=1. Menu is at z=0.5.
+        // Distance from camera = 0.5
+        const dist = camera.position.z - 0.5;
+        const vH = 2 * Math.tan((camera.fov * Math.PI) / 360) * dist;
+        const vW = vH * camera.aspect;
+
+        // Margins - tuned for 0.5 depth
+        // Reduced by 50% as requested to be "half distance closer to the center"
+        const marginX = vW * 0.225;
+        const marginY = vH * 0.2;
+        const zPos = 0.5;
+
+        menuLabels.forEach(item => {
+          if (!item.mesh) return;
+
+          if (item.pos === 'TL') item.mesh.position.set(-marginX, marginY, zPos);
+          if (item.pos === 'TR') item.mesh.position.set(marginX, marginY, zPos);
+          if (item.pos === 'BL') item.mesh.position.set(-marginX, -marginY, zPos);
+          if (item.pos === 'BR') item.mesh.position.set(marginX, -marginY, zPos);
+        });
+      };
+      // ---------------------
+
       // Scaling Function (Cover Screen)
       const updateScale = () => {
         const dist = camera.position.z;
@@ -177,57 +258,57 @@
       // Mouse Listener
       document.addEventListener('mousemove', (event) => {
         userHasInteracted = true;
+        // Navigation rotation values (inverted)
         mouseX = (event.clientX - windowHalfX) / windowHalfX;
         mouseY = (event.clientY - windowHalfY) / windowHalfY;
+
+        // Raycasting values (0 to 1 mapping is handled by Raycaster but we need normalized device coordinates -1 to 1)
+        rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       });
 
-      // Gyroscope Listener (Mobile)
-      const handleOrientation = (event) => {
-        if (!event.alpha && !event.beta && !event.gamma) return;
+      // Raycaster for Hover
+      const raycaster = new THREE.Raycaster();
+      const rayMouse = new THREE.Vector2(-100, -100); // Init off-screen
 
+      // Touch Listener (Mobile)
+      document.addEventListener('touchmove', (event) => {
+        if (event.touches.length > 0) {
+          userHasInteracted = true;
+          const touchX = event.touches[0].clientX;
+          const touchY = event.touches[0].clientY;
+          mouseX = (touchX - windowHalfX) / windowHalfX;
+          mouseY = (touchY - windowHalfY) / windowHalfY;
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchstart', () => {
+        userHasInteracted = true;
+      }, { passive: false });
+
+      // Click Listener
+      document.addEventListener('click', (event) => {
+        // Trigger generic interaction
         userHasInteracted = true;
 
-        // Gamma: Left/Right tilt (-90 to 90)
-        // Map -45 to 45 -> -1 to 1
-        let g = event.gamma || 0;
-        if (g > 45) g = 45;
-        if (g < -45) g = -45;
-        mouseX = (g / 45) * 3;
+        // Check Raycast
+        raycaster.setFromCamera(rayMouse, camera);
+        const intersects = raycaster.intersectObjects(menuItems);
 
-        // Beta: Front/Back tilt (-180 to 180)
-        // Holding phone normally: Beta is around 45 to 90 degrees.
-        // Let's assume neutral is 45 degrees. Range 0 to 90.
-        // Map 0 to 90 -> -1 to 1
-        let b = event.beta || 0;
-        // Shift center to 45
-        let bNorm = b - 45;
-        // Clamp -45 to 45
-        if (bNorm > 45) bNorm = 45;
-        if (bNorm < -45) bNorm = -45;
-        mouseY = (bNorm / 45) * 3;
-      };
-
-      window.addEventListener('deviceorientation', handleOrientation);
-
-      // iOS Permission Request
-      // We need a user interaction to request permission on iOS 13+
-      const requestGyro = () => {
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(response => {
-              if (response === 'granted') {
-                window.addEventListener('deviceorientation', handleOrientation);
-              }
-            })
-            .catch(console.error);
+        if (intersects.length > 0) {
+          const action = intersects[0].object.userData.action;
+          if (action) {
+            if (window.parent && window.parent.loadContent) {
+              window.parent.loadContent(action);
+            } else {
+              // Fallback
+              window.location.href = action;
+            }
+          }
         }
-        // Remove listener after first interaction attempt
-        document.removeEventListener('click', requestGyro);
-        document.removeEventListener('touchstart', requestGyro);
-      };
+      });
 
-      document.addEventListener('click', requestGyro);
-      document.addEventListener('touchstart', requestGyro);
+
 
 
       // Handle Resize
@@ -236,7 +317,9 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(window.innerWidth, window.innerHeight);
         updateScale();
+        updateMenuPositions();
       };
 
       window.addEventListener('resize', onResize);
@@ -253,17 +336,41 @@
         // Condition: If user has NOT interacted, AND we passed threshold, do idle.
         if (!userHasInteracted && (now - startTime > idleThreshold)) {
           // Idle Mode: Smooth left-to-right sway
-          targetRotY = Math.sin(now * 0.0005) * 0.1;
-          targetRotX = Math.cos(now * 0.0003) * 0.05;
+          // Amplitude increased 3x as requested (0.1 -> 0.3, 0.05 -> 0.15)
+          targetRotY = Math.sin(now * 0.0005) * 0.3;
+          targetRotX = Math.cos(now * 0.0003) * 0.15;
         } else if (userHasInteracted) {
           // Active Mode
-          targetRotX = mouseY * 0.3; // User tweaked to 0.3
-          targetRotY = mouseX * 0.3; // User tweaked to 0.3
+          targetRotX = -mouseY * 0.3; // Inverted
+          targetRotY = -mouseX * 0.3; // Inverted
         }
 
         // Smooth interpolation
         points.rotation.x += 0.05 * (targetRotX - points.rotation.x);
         points.rotation.y += 0.05 * (targetRotY - points.rotation.y);
+
+        points.rotation.x += 0.05 * (targetRotX - points.rotation.x);
+        points.rotation.y += 0.05 * (targetRotY - points.rotation.y);
+
+        // Raycasting Logic
+        if (menuItems.length > 0) {
+          // Update Raycaster
+          raycaster.setFromCamera(rayMouse, camera);
+          const intersects = raycaster.intersectObjects(menuItems);
+
+          // Reset all to white
+          menuItems.forEach(mesh => {
+            mesh.material.color.setHex(0xffffff);
+          });
+
+          // Set hovered to red
+          if (intersects.length > 0) {
+            intersects[0].object.material.color.setHex(0xff0000);
+            document.body.style.cursor = 'pointer';
+          } else {
+            document.body.style.cursor = 'default';
+          }
+        }
 
         renderer.render(scene, camera);
       };
