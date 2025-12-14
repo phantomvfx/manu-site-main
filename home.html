@@ -293,19 +293,11 @@
         let g = event.gamma || 0;
         if (g > 45) g = 45;
         if (g < -45) g = -45;
-        mouseX = (g / 45) * 3; // 3x Multiplier
+        mouseX = (g / 45) * 1.5; // Reduced to 1.5 (Half of 3)
 
-        // Beta: Front/Back tilt (-180 to 180)
-        // Holding phone normally: Beta is around 45 to 90 degrees.
-        // Let's assume neutral is 45 degrees. Range 0 to 90.
-        // Map 0 to 90 -> -1 to 1
-        let b = event.beta || 0;
-        // Shift center to 45
-        let bNorm = b - 45;
-        // Clamp -45 to 45
-        if (bNorm > 45) bNorm = 45;
-        if (bNorm < -45) bNorm = -45;
-        mouseY = (bNorm / 45) * 3; // 3x Multiplier
+        // Beta: Front/Back tilt (-180 to 180) - LOCKED
+        // User requested to lock up/down
+        mouseY = 0;
       };
 
       window.addEventListener('deviceorientation', handleOrientation);
