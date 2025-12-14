@@ -199,23 +199,24 @@
 </head>
 
 <body>
-  <!-- Top Navigation 
+  <!-- Top Navigation -->
   <div class="topnav" id="myTopnav">
     <div class="nav-left">
       <div class="icon" onclick="toggleMenu(this)">
         <i class="fas fa-bars"></i>
       </div>
-      <a href="javascript:void(0);" class="topnav-link title" onclick="loadContent('home.html');">Manuel Llamas Portfolio</a>
+      <a href="javascript:void(0);" class="topnav-link title" onclick="loadContent('home.html');">Manuel Llamas
+        Portfolio</a>
     </div>
-    
+
     <div class="dropdown-content" id="myDropdown">
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('3D/index.html');">3D</a>
-      <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('https://phantasmalabs.netlify.app/synth.html');">Synthography</a>
+      <a href="javascript:void(0);" class="topnav-link"
+        onclick="loadContent('https://phantasmalabs.netlify.app/synth.html');">Synthography</a>
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('photo/index.html');">Photography</a>
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('vfx/index.html');">Visual Effects</a>
     </div>
   </div>
--->
   <!-- Iframe Section -->
   <div class="iframe-container">
     <iframe id="displaycontainer" name="displaycontainer" src="home.html" loading="lazy"></iframe>
@@ -250,6 +251,13 @@
         const icon = document.querySelector(".icon i");
         icon.classList.remove("fa-times");
         icon.classList.add("fa-bars");
+      }
+
+      // Hide topnav if on home.html (landing page), Show otherwise
+      if (page.includes("home.html")) {
+        topnav.style.display = "none";
+      } else {
+        topnav.style.display = "flex";
       }
 
 
