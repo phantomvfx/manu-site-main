@@ -155,18 +155,20 @@
       scene.add(menuGroup);
       const menuItems = [];
       const menuLabels = [
-        { text: '3D', pos: 'TL', action: '3D/index.html' },
-        { text: 'AI', pos: 'TR', action: 'https://phantasmalabs.com/syntography.html' },
-        { text: 'Film', pos: 'BL', action: 'vfx/index.html' },
-        { text: 'Photo', pos: 'BR', action: 'photo/index.html' }
+        { text: '3 D', pos: 'TL', action: '3D/index.html' },
+        { text: 'A I', pos: 'TR', action: 'https://phantasmalabs.com/ai.html' },
+        { text: 'F i l m', pos: 'BL', action: 'vfx/index.html' },
+        { text: 'P h o t o', pos: 'BR', action: 'photo/index.html' }
       ];
 
       const fontLoader = new THREE.FontLoader();
       // Using a reliable CDN for the font (Helvetiker Regular)
       fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
 
-        const matNormal = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White
-        const matHover = new THREE.MeshBasicMaterial({ color: 0xff0000 });  // Red
+        // Materials for Chromatic Aberration (Additive Blending)
+        const matR = new THREE.MeshBasicMaterial({ color: 0xff0000, blending: THREE.AdditiveBlending, transparent: true, opacity: 1 });
+        const matG = new THREE.MeshBasicMaterial({ color: 0x00ff00, blending: THREE.AdditiveBlending, transparent: true, opacity: 1 });
+        const matB = new THREE.MeshBasicMaterial({ color: 0x0000ff, blending: THREE.AdditiveBlending, transparent: true, opacity: 1 });
 
         menuLabels.forEach(item => {
           const textGeo = new THREE.TextGeometry(item.text, {
@@ -182,20 +184,27 @@
           const centerOffsetY = -0.5 * (textGeo.boundingBox.max.y - textGeo.boundingBox.min.y);
           textGeo.translate(centerOffset, centerOffsetY, 0);
 
-          const mesh = new THREE.Mesh(textGeo, matNormal.clone());
-          mesh.userData = {
+          // Create Group for the item
+          const group = new THREE.Group();
+          group.userData = {
             isMenu: true,
-            originalColor: 0xffffff,
-            hoverColor: 0xff0000,
-            label: item.text,
-            action: item.action
+            action: item.action,
+            hovered: false,
+            timeOffset: Math.random() * 100
           };
 
-          menuGroup.add(mesh);
-          menuItems.push(mesh);
+          // Create R, G, B meshes
+          const meshR = new THREE.Mesh(textGeo, matR);
+          const meshG = new THREE.Mesh(textGeo, matG);
+          const meshB = new THREE.Mesh(textGeo, matB);
 
-          // Store position logic for resize updates if needed
-          item.mesh = mesh;
+          group.add(meshR, meshG, meshB);
+
+          menuGroup.add(group);
+          menuItems.push(group);
+
+          // Store position logic for resize updates
+          item.group = group;
         });
 
         updateMenuPositions(); // Initial position
@@ -219,12 +228,12 @@
         const zPos = 0.5;
 
         menuLabels.forEach(item => {
-          if (!item.mesh) return;
+          if (!item.group) return;
 
-          if (item.pos === 'TL') item.mesh.position.set(-marginX, marginY, zPos);
-          if (item.pos === 'TR') item.mesh.position.set(marginX, marginY, zPos);
-          if (item.pos === 'BL') item.mesh.position.set(-marginX, -marginY, zPos);
-          if (item.pos === 'BR') item.mesh.position.set(marginX, -marginY, zPos);
+          if (item.pos === 'TL') item.group.position.set(-marginX, marginY, zPos);
+          if (item.pos === 'TR') item.group.position.set(marginX, marginY, zPos);
+          if (item.pos === 'BL') item.group.position.set(-marginX, -marginY, zPos);
+          if (item.pos === 'BR') item.group.position.set(marginX, -marginY, zPos);
         });
 
         // Hide 3D menu on Mobile
@@ -304,17 +313,26 @@
         userHasInteracted = true;
 
         // Check Raycast
+        // Check Raycast
         raycaster.setFromCamera(rayMouse, camera);
-        const intersects = raycaster.intersectObjects(menuItems);
+        const intersects = raycaster.intersectObjects(menuItems, true); // Recursive
 
         if (intersects.length > 0) {
-          const action = intersects[0].object.userData.action;
-          if (action) {
-            if (window.parent && window.parent.loadContent) {
-              window.parent.loadContent(action);
-            } else {
-              // Fallback
-              window.location.href = action;
+          // Traverse up to find the group with action
+          let target = intersects[0].object;
+          while (target && !target.userData.action) {
+            target = target.parent;
+          }
+
+          if (target && target.userData.action) {
+            const action = target.userData.action;
+            if (action) {
+              if (window.parent && window.parent.loadContent) {
+                window.parent.loadContent(action);
+              } else {
+                // Fallback
+                window.location.href = action;
+              }
             }
           }
         }
@@ -373,23 +391,56 @@
 
 
         // Raycasting Logic
+        // Chromatic Aberration & Raycasting Logic
         if (menuItems.length > 0) {
-          // Update Raycaster
+          // 1. Raycast
           raycaster.setFromCamera(rayMouse, camera);
-          const intersects = raycaster.intersectObjects(menuItems);
+          const intersects = raycaster.intersectObjects(menuItems, true); // Recursive
 
-          // Reset all to white
-          menuItems.forEach(mesh => {
-            mesh.material.color.setHex(0xffffff);
-          });
-
-          // Set hovered to red
+          let hoveredGroup = null;
           if (intersects.length > 0) {
-            intersects[0].object.material.color.setHex(0xff0000);
+            let target = intersects[0].object;
+            while (target && !target.userData.isMenu) {
+              target = target.parent;
+            }
+            if (target) hoveredGroup = target;
+          }
+
+          if (hoveredGroup) {
             document.body.style.cursor = 'pointer';
           } else {
             document.body.style.cursor = 'default';
           }
+
+          // 2. Animate Groups
+          const time = Date.now() * 0.005; // speed
+
+          menuItems.forEach(group => {
+            const isHovered = (group === hoveredGroup);
+
+            // R = children[0], G = children[1], B = children[2]
+            const meshR = group.children[0];
+            const meshG = group.children[1];
+            const meshB = group.children[2];
+
+            if (isHovered) {
+              const jitter = Math.sin(time + group.userData.timeOffset) * 0.002 + 0.002; // Base offset + oscillation
+              meshR.position.x = jitter;
+              meshR.position.y = Math.cos(time * 1.5) * 0.001;
+
+              meshB.position.x = -jitter;
+              meshB.position.y = -Math.cos(time * 1.5) * 0.001;
+
+              // G stays center
+              // meshG.position.set(0, 0, 0);
+
+            } else {
+              // Return to center
+              meshR.position.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+              meshG.position.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+              meshB.position.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+            }
+          });
         }
 
         renderer.render(scene, camera);
