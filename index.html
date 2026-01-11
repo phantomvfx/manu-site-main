@@ -166,6 +166,14 @@
       color: black;
     }
 
+    .topnav .nav-left .back-arrow {
+      margin-left: 20px;
+    }
+
+    .topnav.landing-hidden .back-arrow {
+      display: none;
+    }
+
     .topnav.black-text .dropdown-content {
       background-color: white;
     }
@@ -223,11 +231,7 @@
       <div class="icon" onclick="toggleMenu(this)">
         <i class="fas fa-bars"></i>
       </div>
-
-    </div>
-
-    <div class="nav-right" style="padding-right: 10px;">
-      <div class="icon" onclick="loadContent('home.html');" title="Back to Home">
+      <div class="icon back-arrow" onclick="loadContent('home.html');" title="Back to Home">
         <i class="fas fa-arrow-left"></i>
       </div>
     </div>
