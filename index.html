@@ -208,6 +208,10 @@
       .topnav.landing-hidden {
         display: flex;
       }
+
+      .topnav.landing-hidden .nav-right {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -219,14 +223,19 @@
       <div class="icon" onclick="toggleMenu(this)">
         <i class="fas fa-bars"></i>
       </div>
-      <a href="javascript:void(0);" class="topnav-link title" onclick="loadContent('home.html');">Manuel Llamas
-        Portfolio</a>
+
+    </div>
+
+    <div class="nav-right" style="padding-right: 10px;">
+      <div class="icon" onclick="loadContent('home.html');" title="Back to Home">
+        <i class="fas fa-arrow-left"></i>
+      </div>
     </div>
 
     <div class="dropdown-content" id="myDropdown">
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('3D/index.html');">3D</a>
       <a href="javascript:void(0);" class="topnav-link"
-        onclick="loadContent('https://phantasmalabs.com/ai.html');">Synthography</a>
+        onclick="loadContent('https://phantasmalabs.com/ai.html');">AI</a>
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('photo/index.html');">Photography</a>
       <a href="javascript:void(0);" class="topnav-link" onclick="loadContent('vfx/index.html');">Film</a>
     </div>
